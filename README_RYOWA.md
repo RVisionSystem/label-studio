@@ -1,3 +1,19 @@
+# Table of Contents
+- [Table of Contents](#table-of-contents)
+- [Custom Configuration](#custom-configuration)
+  - [Breif](#breif)
+  - [Postgres Database](#postgres-database)
+  - [Persistent Cloud Storage](#persistent-cloud-storage)
+    - [Setup GCS ref](#setup-gcs-ref)
+      - [Create GCS Buket](#create-gcs-buket)
+      - [Configuretion Cors](#configuretion-cors)
+      - [Confiuretion GCS bucket](#confiuretion-gcs-bucket)
+  - [Application setting](#application-setting)
+  - [Combination all environments](#combination-all-environments)
+  - [Docker run command](#docker-run-command)
+    - [Docker image url:](#docker-image-url)
+  - [Download file from Google Cloud Storage](#download-file-from-google-cloud-storage)
+
 # Custom Configuration
 
 ⚠️ All of the contents in this file regarding configurations have been gathered from public documentation, Slack, GitHub issues, and Stack Overflow.
@@ -145,9 +161,9 @@ COLLECT_ANALYTICS=false
 ```
 
 ## Docker run command
-The `custom_config/label-studio:latest` came from manual build of this [Config](#application-setting) `ff_back_dev_2915_storage_nginx_proxy_26092022_short=False`
+The `thaiteam/label-studio:{{TAG_VERSION}}` came from manual build of this [Config](#application-setting) `ff_back_dev_2915_storage_nginx_proxy_26092022_short=False`
 
-For reference the dokcer image that chnaged `ff_back_dev_2915_storage_nginx_proxy_26092022_short=False` which is *hard code* will be pushed in docker hub. Using **thaiteam.ryowa@gmail.com** as owner.
+For reference the docker image that changed `ff_back_dev_2915_storage_nginx_proxy_26092022_short=False` which is *hard code* will be pushed in docker hub. Using **thaiteam.ryowa@gmail.com** as owner.
 
 - `--env-file` equivalent to `-e KEY=VALUE`  but just read environtments from file.
 
@@ -165,7 +181,8 @@ docker run -it -p 9001:8080 \
 -v %cd%/credential.json:/opt/heartex/secrets/key.json \
 {{USERNAME}}/{{IMAGE_NAME}}:{{TAG_VERSION}} label-studio --log-level DEBUG
 ```
-Docker image url: https://hub.docker.com/r/thaiteam/label-studio/tags
+### Docker image url: 
+https://hub.docker.com/r/thaiteam/label-studio/tags
 
 ## Download file from Google Cloud Storage
 - Windows powershell
