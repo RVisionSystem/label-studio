@@ -149,21 +149,23 @@ The `custom_config/label-studio:latest` came from manual build of this [Config](
 
 For reference the dokcer image that chnaged `ff_back_dev_2915_storage_nginx_proxy_26092022_short=False` which is *hard code* will be pushed in docker hub. Using **thaiteam.ryowa@gmail.com** as owner.
 
+- `--env-file` equivalent to `-e KEY=VALUE`  but just read environtments from file.
+
 - Windows powershell
 ```powershell
 docker run -it -p 9001:8080 `
 --env-file .env.list `
 -v ${pwd}/credential.json:/opt/heartex/secrets/key.json `
-custom_config/label-studio:latest label-studio --log-level DEBUG
+{{USERNAME}}/{{IMAGE_NAME}}:{{TAG_VERSION}} label-studio --log-level DEBUG
 ```
 - Linux shell
 ```bash
 docker run -it -p 9001:8080 \
 --env-file .env.list \
 -v %cd%/credential.json:/opt/heartex/secrets/key.json \
-custom_config/label-studio:latest label-studio --log-level DEBUG
+{{USERNAME}}/{{IMAGE_NAME}}:{{TAG_VERSION}} label-studio --log-level DEBUG
 ```
-Docker image url: https://hub.docker.com/repository/docker/thaiteam/label-studio/general
+Docker image url: https://hub.docker.com/r/thaiteam/label-studio/tags
 
 ## Download file from Google Cloud Storage
 - Windows powershell
@@ -179,4 +181,4 @@ gsutil -m cp -r \
   .
 ```
 
-Last edited: 2024/06/20 14:46; Unif
+Last edited: 2024/06/20 15:58; Unif
