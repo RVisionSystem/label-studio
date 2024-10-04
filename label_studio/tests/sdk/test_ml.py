@@ -1,20 +1,27 @@
 import pytest
 from label_studio_sdk.client import LabelStudio
+from label_studio_sdk.label_interface import LabelInterface
 
 
 @pytest.mark.django_db
 def test_batch_predictions_single_prediction_per_task(django_live_url, business_client, ml_backend_for_test_predict):
     ls = LabelStudio(base_url=django_live_url, api_key=business_client.api_key)
+    label_config = LabelInterface.create(
+        {
+            'text': ('Text', {'name': 'text', 'value': '$text'}, ()),
+            'label': (
+                'Choices',
+                {'name': 'label', 'toName': 'text', 'choice': 'single'},
+                (
+                    ('Choice', {'value': 'label_A'}, ()),
+                    ('Choice', {'value': 'label_B'}, ()),
+                ),
+            ),
+        }
+    )
     p = ls.projects.create(
         title='New Project',
-        label_config="""
-            <View>
-              <Text name="text" value="$text"/>
-              <Choices name="label" toName="text" choice="single">
-                <Choice value="label_A"></Choice>
-                <Choice value="label_B"></Choice>
-              </Choices>
-            </View>""",
+        label_config=label_config,
     )
     ls.projects.import_tasks(
         p.id,
@@ -29,7 +36,7 @@ def test_batch_predictions_single_prediction_per_task(django_live_url, business_
     assert len(tasks) == 3
 
     # setup ML backend with single prediction per task
-    ls.ml.create(url='http://localhost:9092', project=p.id, title='ModelSingle')
+    ls.ml.create(url='http://test.ml.backend.for.sdk.com:9092', project=p.id, title='ModelSingle')
 
     # batch predict tasks via actions
     ls.actions.create(
@@ -87,16 +94,19 @@ def test_batch_predictions_multiple_predictions_per_task(
     django_live_url, business_client, ml_backend_for_test_predict
 ):
     ls = LabelStudio(base_url=django_live_url, api_key=business_client.api_key)
-    p = ls.projects.create(
-        title='New Project',
-        label_config="""
+    li = LabelInterface(
+        """
             <View>
               <Text name="text" value="$text"/>
               <Choices name="label" toName="text" choice="single">
                 <Choice value="label_A"></Choice>
                 <Choice value="label_B"></Choice>
               </Choices>
-            </View>""",
+            </View>"""
+    )
+    p = ls.projects.create(
+        title='New Project',
+        label_config=li._config,
     )
     ls.projects.import_tasks(
         p.id,
@@ -111,7 +121,7 @@ def test_batch_predictions_multiple_predictions_per_task(
     assert len(tasks) == 3
 
     # setup ML backend with multiple predictions per task
-    ls.ml.create(url='http://localhost:9093', project=p.id, title='ModelMultiple')
+    ls.ml.create(url='http://test.ml.backend.for.sdk.com:9093', project=p.id, title='ModelMultiple')
 
     # batch predict tasks via actions
     ls.actions.create(

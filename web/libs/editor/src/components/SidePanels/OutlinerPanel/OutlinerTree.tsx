@@ -25,9 +25,10 @@ import { flatten, isDefined, isMacOS } from "../../../utils/utilities";
 import { NodeIcon } from "../../Node/Node";
 import { LockButton } from "../Components/LockButton";
 import { RegionControlButton } from "../Components/RegionControlButton";
-import "./TreeView.styl";
+import "./TreeView.scss";
 import ResizeObserver from "../../../utils/resize-observer";
 import type { EventDataNode, Key } from "rc-tree/es/interface";
+import { RegionLabel } from "./RegionLabel";
 
 const { localStorage } = window;
 const localStoreName = "collapsed-label-pos";
@@ -164,7 +165,7 @@ const OutlinerInnerTreeComponent: FC<OutlinerInnerTreeProps> = observer(({ regio
 
   return (
     <Block name="outliner-tree" {...(isFF(FF_OUTLINER_OPTIM) ? { ref: setRef } : {})}>
-      {!!height && (
+      {(!!height || !isFF(FF_OUTLINER_OPTIM)) && (
         <Tree
           key={regions.group}
           draggable={regions.group === "manual"}
@@ -173,7 +174,7 @@ const OutlinerInnerTreeComponent: FC<OutlinerInnerTreeProps> = observer(({ regio
           defaultExpandParent={!isPersistCollapseEnabled}
           autoExpandParent
           checkable={false}
-          prefixCls="lsf-tree"
+          prefixCls={rootClass.toClassName()}
           className={rootClass.toClassName()}
           treeData={regionsTree}
           selectedKeys={selectedKeys}
@@ -206,37 +207,15 @@ const useDataTree = ({ regions, rootClass, footer }: any) => {
     const color = chroma(style ?? "#666").alpha(1);
     const mods: Record<string, any> = { hidden, type, isDrawing };
 
-    const label = (() => {
-      if (!type) {
-        return "No Label";
-      }
-      if (type.includes("label")) {
-        return item.value;
-      }
-      if (type.includes("region") || type.includes("range")) {
-        const labelsInResults = item.labelings.map((result: any) => result.selectedLabels || []);
+    const label = <RegionLabel item={item} />;
 
-        const labels: any[] = [].concat(...labelsInResults);
-
-        return (
-          <Block name="labels-list">
-            {labels.map((label, index) => {
-              const color = label.background || "#000000";
-
-              return [
-                index ? ", " : null,
-                <Elem key={label.id} style={{ color }}>
-                  {label.value || "No label"}
-                </Elem>,
-              ];
-            })}
-          </Block>
-        );
-      }
-      if (type.includes("tool")) {
-        return item.value;
-      }
-    })();
+    // The only source of truth for region indices is here, where they are coming from different
+    // RegionStore methods and just rendered a second later; so we store them in a region
+    // to render in other places as well, so indices will be consistent across the app.
+    // Also `item` here can be a tool or a label when we use groupping, so only add idx to regions.
+    // It can even be undefined for group titles in Labels mode.
+    // Later in this file we render (idx + 1), so we will set it as (idx + 1) to incapsulate this logic.
+    item?.setRegionIndex?.(idx + 1);
 
     return {
       idx,

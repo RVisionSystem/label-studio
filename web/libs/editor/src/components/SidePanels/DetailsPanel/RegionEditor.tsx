@@ -22,7 +22,7 @@ import React, {
 } from "react";
 import { IconPropertyAngle } from "../../../assets/icons";
 import { Block, Elem, useBEM } from "../../../utils/bem";
-import "./RegionEditor.styl";
+import "./RegionEditor.scss";
 import { TimeDurationControl } from "../../TimeDurationControl/TimeDurationControl";
 import { FF_DEV_2715, isFF } from "../../../utils/feature-flags";
 
@@ -96,6 +96,8 @@ const RegionEditorComponent: FC<RegionEditorProps> = ({ region }) => {
           isSidepanel={true}
           onChangeStartTime={changeStartTimeHandler}
           onChangeEndTime={changeEndTimeHandler}
+          showLabels
+          showDuration
         />
       </Elem>
     );

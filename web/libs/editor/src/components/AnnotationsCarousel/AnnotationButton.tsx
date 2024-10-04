@@ -15,7 +15,7 @@ import {
 } from "../../assets/icons";
 import { userDisplayName } from "../../utils/utilities";
 import { TimeAgo } from "../../common/TimeAgo/TimeAgo";
-import "./AnnotationButton.styl";
+import "./AnnotationButton.scss";
 import { useCallback, useEffect, useState } from "react";
 import { Dropdown } from "../../common/Dropdown/Dropdown";
 import { useDropdown } from "../../common/Dropdown/DropdownTrigger";
@@ -213,7 +213,7 @@ export const AnnotationButton = observer(
               {entity.draftId > 0 && (
                 <Tooltip title={"Draft"}>
                   <Elem name="icon" mod={{ draft: true }}>
-                    <IconDraftCreated2 color="#0099FF" />
+                    <IconDraftCreated2 color="#617ADA" />
                   </Elem>
                 </Tooltip>
               )}

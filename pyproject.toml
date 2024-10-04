@@ -104,7 +104,7 @@ target-version = ['py38']
 [tool.poetry]
 
 name = "label-studio"
-version = "1.12.2.dev0"
+version = "1.13.2.dev0"
 description = "Label Studio annotation tool"
 authors = [
     "Heartex <hello@heartex.ai>",
@@ -154,7 +154,7 @@ boto = "^2.49.0"
 boto3 = "^1.28.58"
 botocore = "^1.31.58"
 bleach = "~=5.0.0"
-Django = "~=3.2.24"
+Django = "~=4.2.13"
 django-storages = "1.12.3"
 django-annoying = "0.10.6"
 django-debug-toolbar = "3.2.1"
@@ -163,16 +163,15 @@ django-filter = "2.4.0"
 django-model-utils = "4.1.1"
 django-rq = "2.5.1"
 django-cors-headers = "3.6.0"
-django-extensions = "3.1.0"
+django-extensions = "3.2.3"
 django-user-agents = "0.4.0"
 django-ranged-fileresponse = ">=0.1.2"
 drf-dynamic-fields = "0.3.0"
-djangorestframework = "3.13.1"
+djangorestframework = "3.15.2"
 drf-flex-fields = "0.9.5"
 humansignal-drf-yasg = ">=1.21.9"
 drf-generators = "0.3.0"
 htmlmin = "0.1.12"
-jsonschema = "3.2.0"
 lockfile = ">=0.12.0"
 lxml = ">=4.2.5"
 defusedxml = ">=0.7.1"
@@ -180,13 +179,13 @@ numpy = "^1.24.3"
 ordered-set = "4.0.2"
 pandas = ">=0.24.0"
 psycopg2-binary = "2.9.9"
-pydantic = "<=1.11.0,>=1.7.3"
+pydantic = ">=2.7.3"
 python-dateutil = ">=2.8.1"
 pytz = "~=2022.1"
-requests = "2.31.0"
+requests = "~=2.32.3"
 urllib3 = "^1.26.18"
 rq = "1.10.1"
-rules = "2.2"
+rules = "3.4"
 ujson = ">=3.0.0"
 xmljson = "0.2.1"
 colorama = ">=0.4.4"
@@ -200,10 +199,11 @@ google-cloud-logging = "^3.10.0"
 mysqlclient = {version = "*", optional = true}
 django-csp = "3.7"
 openai = "^1.10.0"
+django-migration-linter = "^5.1.0"
 
 # Humansignal repo dependencies
 
-label-studio-sdk = {url = "https://github.com/HumanSignal/label-studio-sdk/archive/f6fb130d41380704d36045e21839d3f27ddf2883.zip"}
+label-studio-sdk = {url = "https://github.com/HumanSignal/label-studio-sdk/archive/d9e75f3bd13f2d28e1fc256acef3d9fb9e936662.zip"}
 
 [tool.poetry.group.test.dependencies]
 pytest = "7.2.2"

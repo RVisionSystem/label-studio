@@ -8,9 +8,10 @@ import Registry from "../core/Registry";
 import { TextAreaModel } from "../tags/control/TextArea/TextArea";
 import { guidGenerator } from "../core/Helpers";
 
-import styles from "./TextAreaRegion/TextAreaRegion.module.scss";
+import styles from "./TextAreaRegion/TextAreaRegion.scss";
 import { HtxTextBox } from "../components/HtxTextBox/HtxTextBox";
-import { FF_DEV_1566, FF_LSDV_4712, isFF } from "../utils/feature-flags";
+import { FF_LSDV_4712, isFF } from "../utils/feature-flags";
+import { cn } from "../utils/bem";
 
 const Model = types
   .model("TextAreaRegionModel", {
@@ -112,7 +113,7 @@ const HtxTextAreaRegionView = ({ item, onFocus }) => {
   const name = `${parent?.name ?? ""}:${item.id}`;
 
   return (
-    <div {...divAttrs} className={styles.row} data-testid="textarea-region">
+    <div {...divAttrs} className={cn("row").toString()} data-testid="textarea-region">
       <HtxTextBox
         isEditable={editable}
         isDeleteable={deleteable}
@@ -123,7 +124,7 @@ const HtxTextAreaRegionView = ({ item, onFocus }) => {
         rows={parent.rows}
         text={item._value}
         {...params}
-        ignoreShortcuts={isFF(FF_DEV_1566)}
+        ignoreShortcuts={true}
       />
     </div>
   );

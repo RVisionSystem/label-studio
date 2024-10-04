@@ -12,14 +12,11 @@ import Result from "../../regions/Result";
 import Utils from "../../utils";
 import {
   FF_DEV_1284,
-  FF_DEV_1598,
-  FF_DEV_2100,
   FF_DEV_2432,
   FF_DEV_3391,
   FF_LLM_EPIC,
   FF_LSDV_3009,
   FF_LSDV_4583,
-  FF_LSDV_4832,
   FF_LSDV_4988,
   FF_REVIEWER_FLOW,
   isFF,
@@ -29,6 +26,7 @@ import { CommentStore } from "../Comment/CommentStore";
 import RegionStore from "../RegionStore";
 import RelationStore from "../RelationStore";
 import { UserExtended } from "../UserStore";
+import { LinkingModes } from "./LinkingModes";
 
 const hotkeys = Hotkey("Annotations", "Annotations");
 
@@ -99,8 +97,8 @@ const TrackedState = types.model("TrackedState", {
   relationStore: types.optional(RelationStore, {}),
 });
 
-export const Annotation = types
-  .model("Annotation", {
+const _Annotation = types
+  .model("AnnotationBase", {
     id: types.identifier,
     // @todo this value used `guidGenerator(5)` as default value before
     // @todo but it calculates once, so all the annotations have the same pk
@@ -148,8 +146,6 @@ export const Annotation = types
 
     editable: types.optional(types.boolean, true),
     readonly: types.optional(types.boolean, false),
-
-    relationMode: types.optional(types.boolean, false),
 
     suggestions: types.map(Area),
 
@@ -236,9 +232,7 @@ export const Annotation = types
 
     get objects() {
       // Without correct validation toname may be null for control tags so we need to check isObjectTag instead of it
-      return Array.from(self.names.values()).filter(
-        isFF(FF_DEV_1598) ? (tag) => tag.isObjectTag : (tag) => !tag.toname,
-      );
+      return Array.from(self.names.values()).filter((tag) => tag.isObjectTag);
     },
 
     get regions() {
@@ -287,7 +281,7 @@ export const Annotation = types
     },
 
     get hasSelection() {
-      return self.regionStore.selection.hasSelection;
+      return self.regionStore.hasSelection;
     },
     get selectionSize() {
       return self.regionStore.selection.size;
@@ -494,27 +488,11 @@ export const Annotation = types
       destroy(area);
     },
 
-    startRelationMode(node1) {
-      self._relationObj = node1;
-      self.relationMode = true;
-
-      document.body.style.cursor = Constants.CHOOSE_CURSOR;
-    },
-
-    stopRelationMode() {
-      document.body.style.cursor = Constants.DEFAULT_CURSOR;
-
-      self._relationObj = null;
-      self.relationMode = false;
-
-      self.regionStore.unhighlightAll();
-    },
-
     deleteAllRegions({ deleteReadOnly = false } = {}) {
       let regions = Array.from(self.areas.values());
 
       // remove everything unconditionally
-      if (deleteReadOnly && isFF(FF_LSDV_4832)) {
+      if (deleteReadOnly) {
         self.unselectAll(true);
         self.setIsDrawing(false);
         self.relationStore.deleteAllRelations();
@@ -538,9 +516,9 @@ export const Annotation = types
     addRegion(reg) {
       self.regionStore.unselectAll(true);
 
-      if (self.relationMode) {
-        self.addRelation(reg);
-        self.stopRelationMode();
+      if (self.isLinkingMode) {
+        self.addLinkedRegion(reg);
+        self.stopLinkingMode();
       }
     },
 
@@ -552,10 +530,6 @@ export const Annotation = types
           mainViewTag.unselectAll && mainViewTag.unselectAll();
           mainViewTag.perRegionCleanup && mainViewTag.perRegionCleanup();
         });
-    },
-
-    addRelation(reg) {
-      self.relationStore.addRelation(self._relationObj, reg);
     },
 
     validate() {
@@ -586,7 +560,7 @@ export const Annotation = types
         }
       });
 
-      self.stopRelationMode();
+      self.stopLinkingMode();
       self.unselectAll();
     },
 
@@ -943,7 +917,7 @@ export const Annotation = types
 
     createResult(areaValue, resultValue, control, object, skipAfrerCreate = false) {
       // Without correct validation object may be null, but it it shouldn't be so in results - so we should find any
-      if (isFF(FF_DEV_1598) && !object && control.type === "textarea") {
+      if (!object && control.type === "textarea") {
         object = self.objects[0];
       }
       const objectTag = self.names.get(object.name ?? object);
@@ -1124,7 +1098,7 @@ export const Annotation = types
 
           const imageEntity = tag.findImageEntity(obj.item_index ?? 0);
 
-          if (!imageEntity) return;
+          if (!imageEntity || imageEntity.imageLoaded) return;
 
           imageEntity.setNaturalWidth(obj.original_width);
           imageEntity.setNaturalHeight(obj.original_height);
@@ -1220,7 +1194,7 @@ export const Annotation = types
         });
 
         // It's not necessary, but it's calmer with this
-        if (isFF(FF_DEV_2100)) self.cleanClassificationAreas();
+        self.cleanClassificationAreas();
 
         !hidden &&
           self.results.filter((r) => r.area.classification).forEach((r) => r.from_name.updateFromResult?.(r.mainValue));
@@ -1437,3 +1411,5 @@ export const Annotation = types
       self.areas.forEach((area) => area.setReady && area.setReady(false));
     },
   }));
+
+export const Annotation = types.compose("Annotation", LinkingModes, _Annotation);

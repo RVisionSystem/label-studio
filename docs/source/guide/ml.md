@@ -76,7 +76,17 @@ The model should begin running at `http://localhost:9090` (if you are using a Do
 {"model_class":"SamMLBackend","status":"UP"}
 ```
 
-If you see any errors, see [Troubleshooting ML Backends & Predictions](https://support.humansignal.com/hc/en-us/sections/23627938255117-ML-Backend-Predictions) in the HumanSignal support center and see the [Troubleshooting section in the README](https://github.com/HumanSignal/label-studio-ml-backend/tree/master?tab=readme-ov-file#troubleshooting).
+<div class="opensource-only">
+
+If you see any errors, see [Troubleshooting ML backends](troubleshooting#ML-backends) and the [Troubleshooting section in the README](https://github.com/HumanSignal/label-studio-ml-backend/tree/master/README.md#troubleshooting).
+
+</div>
+
+<div class="enterprise-only">
+
+If you see any errors, see [Troubleshooting ML Backends & Predictions](https://support.humansignal.com/hc/en-us/sections/23627938255117-ML-Backend-Predictions) in the HumanSignal support center and see the [Troubleshooting section in the README](https://github.com/HumanSignal/label-studio-ml-backend/tree/master/README.md#troubleshooting).
+
+</div>
 
 #### localhost and Docker containers
 
@@ -172,8 +182,8 @@ from label_studio_tools.core.utils.io import get_local_path
 class MLBackend(LabelStudioMLBase)
   def predict(tasks):
     task = tasks[0]
-    locaL_path = get_local_path(task['data']['image'], task_id=task['id'])
-    with open(locaL_path, 'r') as f:
+    local_path = get_local_path(task['data']['image'], task_id=task['id'])
+    with open(local_path, 'r') as f:
       f.read()
 ```
 
